@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: handson
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+          - name: default
+            containerPort: 80
+          - name: test1
+            containerPort: 30001
+          - name: test2
+            containerPort: 30002
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/test-server.conf
+              readOnly: true
+              name: nginx-conf
+              subPath: test-server.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+            items:
+              - key: test-server.conf
+                path: test-server.conf

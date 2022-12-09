@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-frontend
+  namespace: handson
+  labels:
+    app: nginx
+    tier: frontend
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-backend
+  namespace: handson
+  labels:
+    app: nginx
+    tier: backend
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  namespace: handson
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      nodePort: 30036
+      port: 8080
+      targetPort: 80

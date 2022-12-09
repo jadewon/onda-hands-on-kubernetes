@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: handson
+data:
+  default.conf: |
+    server {
+      listen 80;
+      location /success {
+        return 200;
+      }
+      location /failure {
+        return 400;
+      }
+    }
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-success
+  namespace: handson
+spec:
+  containers:
+  - name: nginx-success
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        path: /success
+        port: 80
+      initialDelaySeconds: 1
+      periodSeconds: 1
+      timeoutSeconds: 1
+      failureThreshold: 1
+    volumeMounts:
+      - mountPath: /etc/nginx/conf.d/default.conf
+        readOnly: true
+        name: nginx-conf
+        subPath: default.conf
+  volumes:
+    - name: nginx-conf
+      configMap:
+        name: nginx-conf
+        items:
+          - key: default.conf
+            path: default.conf
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-failure
+  namespace: handson
+spec:
+  containers:
+  - name: nginx-failure
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        path: /failure
+        port: 80
+      initialDelaySeconds: 1
+      periodSeconds: 1
+      timeoutSeconds: 1
+      failureThreshold: 1
+    volumeMounts:
+      - mountPath: /etc/nginx/conf.d/default.conf
+        readOnly: true
+        name: nginx-conf
+        subPath: default.conf
+  volumes:
+    - name: nginx-conf
+      configMap:
+        name: nginx-conf
+        items:
+          - key: default.conf
+            path: default.conf
+---

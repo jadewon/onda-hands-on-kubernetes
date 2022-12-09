@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-get-role
+  namespace: handson
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get","list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-get-role-bind
+  namespace: handson
+subjects:
+  - kind: ServiceAccount
+    name: jade
+    namespace: handson
+roleRef:
+  kind: Role
+  name: pod-get-role
+  apiGroup: rbac.authorization.k8s.io

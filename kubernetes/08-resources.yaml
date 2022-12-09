@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-resource
+  namespace: handson
+spec:
+  containers:
+  - name: nginx-resource
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        memory: 16Mi
+        cpu: 5m
+      limits:
+        memory: 32Mi
+        cpu: 10m
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-resource-huge-mem
+  namespace: handson
+spec:
+  containers:
+  - name: nginx-resource-huge-mem
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        memory: 5Gi
+        cpu: 5m
+      limits:
+        memory: 5Gi
+        cpu: 5m
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-resource-huge-cpu
+  namespace: handson
+spec:
+  containers:
+  - name: nginx-resource-huge-cpu
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        memory: 16Mi
+        cpu: 5
+      limits:
+        memory: 16Mi
+        cpu: 5

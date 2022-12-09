@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: handson
+spec:
+  serviceAccountName: jade
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    env:
+    - name: APISERVER
+      value: "https://kubernetes.default.svc"
+    - name: SERVICEACCOUNT
+      value: "/var/run/secrets/kubernetes.io/serviceaccount"
+    - name: TOKEN_FILE
+      value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    - name: CACERT
+      value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nginx-job
+  namespace: handson
+  labels:
+    app: nginx
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      serviceAccountName: jade
+      restartPolicy: Never
+      containers:
+      - name: nginx
+        image: nginx:latest
+        command: ["/bin/bash", "-c"]
+        args: ['curl -sS --cacert ${CACERT} --header "Authorization: Bearer $(cat $TOKEN_FILE)" -X GET ${APISERVER}/api/v1/namespaces/handson/pods/nginx']
+        ports:
+        - name: default
+          containerPort: 80
+        env:
+        - name: APISERVER
+          value: "https://kubernetes.default.svc"
+        - name: SERVICEACCOUNT
+          value: "/var/run/secrets/kubernetes.io/serviceaccount"
+        - name: TOKEN_FILE
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+        - name: CACERT
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"

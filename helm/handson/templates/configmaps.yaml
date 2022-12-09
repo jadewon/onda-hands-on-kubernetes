@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-conf
+  namespace: {{ .Release.Namespace }}
+data:
+  default.conf: |
+    server {
+      listen 80;
+      location / {
+        return 200;
+      }
+      location /health {
+        access_log off;
+        return 200 "OK";
+      }
+    }
+  env: {{ .Values.env }}
