@@ -32,12 +32,6 @@ $ brew install minikube
 $ echo 'eval $(minikube docker-env)' >> ~/.zshrc
 ```
 
-### gRPCurl (macOS)
-
-```sh
-$ brew install grpcurl
-```
-
 ### helm 설치
 
 ```sh
@@ -49,9 +43,16 @@ $ brew install helm
 ## 클러스터 생성
 
 ```sh
-$ minikube start -p minikube-24 --kubernetes-version=v1.24.8
+$ minikube start
 
 # 확인
 $ kubectl get nodes
 $ kubectl config current-context
+```
+
+
+## 클러스터 멈춤
+```sh
+minikube stop
+minikube delete
 ```
